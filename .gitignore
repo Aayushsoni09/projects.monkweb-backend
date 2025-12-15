@@ -1,1 +1,11 @@
 .env
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Terraform artifacts
+artifacts/*.zip
+
+# OS
+.DS_Store
