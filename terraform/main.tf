@@ -35,12 +35,12 @@ module "cloudfront" {
   waf_acl_arn     = module.waf_cf.waf_arn
   domain_name    = var.domain_name
 }
-module "waf_api" {
-  source       = "./modules/security"
-  project_name = var.project_name
-  scope        = "REGIONAL"
-  vpc_id       = module.networking.vpc_id
-}
+# module "waf_api" {
+#   source       = "./modules/security"
+#   project_name = var.project_name
+#   scope        = "REGIONAL"
+#   vpc_id       = module.networking.vpc_id
+# }
 module "security" {
   source       = "./modules/security"
   project_name = var.project_name

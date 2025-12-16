@@ -15,12 +15,20 @@ resource "aws_s3_bucket_policy" "cf_access" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid    = "AllowCloudFrontServicePrincipal"
         Effect = "Allow"
         Principal = {
           Service = "cloudfront.amazonaws.com"
         }
-        Action   = "s3:GetObject"
-        Resource = "${aws_s3_bucket.this.arn}/*"
+        Action = [
+          "s3:GetObject",
+          "s3:ListBucket" 
+        ]
+        
+        Resource = [
+          aws_s3_bucket.this.arn,
+          "${aws_s3_bucket.this.arn}/*"
+        ]
         Condition = {
           StringEquals = {
             "AWS:SourceArn" = var.cloudfront_arn
@@ -29,4 +37,10 @@ resource "aws_s3_bucket_policy" "cf_access" {
       }
     ]
   })
+}
+resource "aws_s3_bucket_ownership_controls" "this" {
+  bucket = aws_s3_bucket.this.id
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
 }

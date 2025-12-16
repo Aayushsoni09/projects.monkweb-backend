@@ -8,14 +8,13 @@ resource "aws_cloudfront_origin_access_control" "oac" {
 resource "aws_cloudfront_distribution" "this" {
   enabled    = true
   web_acl_id = var.waf_acl_arn
-  aliases = [
-  var.domain_name
-]
-
+  aliases = [var.domain_name]
+  default_root_object = "index.html"
   origin {
     domain_name              = var.s3_domain_name
     origin_id                = "s3-origin"
     origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
+    
   }
 
   default_cache_behavior {

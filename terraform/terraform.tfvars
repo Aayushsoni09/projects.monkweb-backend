@@ -1,3 +1,3 @@
-acm_cert_arn = "arn:aws:acm:us-east-1:381491835701:certificate/07b4953f-dcf4-4bad-abf8-4527e95575e6"
-domain_name   = "projects.monkweb.tech"
+acm_cert_arn = "arn:aws:acm:us-east-1:381491835701:certificate/8cecc44f-801f-48c2-aeb5-8414ca3d887a"
+domain_name   = "myresume.monkweb.tech"
 project_name  = "cloud-resume-challenge"
