@@ -21,7 +21,7 @@ resource "aws_lambda_function" "this" {
   function_name = "${var.project_name}-lambda"
   role          = aws_iam_role.lambda.arn
   runtime       = "python3.11"
-  handler       = "lambda.handler"
+  handler       = "backend.lambda_handler"
   filename      = var.lambda_zip
 
   vpc_config {
