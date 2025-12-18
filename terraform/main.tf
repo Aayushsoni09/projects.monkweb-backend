@@ -15,7 +15,7 @@ module "lambda" {
   lambda_sg_id          = module.security_sg.lambda_sg_id
   dynamodb_table_name   = module.database.table_name
   dynamodb_table_arn    = module.database.table_arn
-  lambda_zip            = "${path.root}/artifacts/backend.zip"
+  lambda_zip            = var.lambda_zip
 }
 module "waf_cf" {
   source       = "./modules/security"
