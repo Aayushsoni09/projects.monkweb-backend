@@ -30,7 +30,7 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          export PYTHONPATH=$PYTHONPATH:.
+          export PYTHONPATH=$PYTHONPATH:./terraform
           pytest tests/
 
       - name: Run Trivy Vulnerability Scanner
