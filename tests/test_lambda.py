@@ -8,7 +8,7 @@ import json
 os.environ["TABLE_NAME"] = "test-table"
 
 # 1. IMPORT YOUR ACTUAL FILENAME
-import ../backend 
+import backend 
 
 @mock_aws
 def test_lambda_handler_updates_count():
