@@ -10,6 +10,3 @@ variable "acm_cert_arn" {
   type = string
 }
 
-variable "github_repo" {
-  type = string
-}
