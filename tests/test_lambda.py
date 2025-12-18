@@ -4,16 +4,16 @@ from moto import mock_aws
 import os
 import json
 
-# Set dummy env vars for the test
+# Set dummy env vars
 os.environ["TABLE_NAME"] = "test-table"
 
-# Import your lambda code (Assuming your file is named 'counter.py')
-import counter 
+# 1. IMPORT YOUR ACTUAL FILENAME
+import ../backend 
 
 @mock_aws
 def test_lambda_handler_updates_count():
-    # 1. Setup Mock DynamoDB
-    dynamodb = boto3.resource("dynamodb", region_name="ap-south-1")
+    # Setup Mock DynamoDB
+    dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
     table = dynamodb.create_table(
         TableName="test-table",
         KeySchema=[{"AttributeName": "pk", "KeyType": "HASH"}],
@@ -21,12 +21,11 @@ def test_lambda_handler_updates_count():
         ProvisionedThroughput={"ReadCapacityUnits": 1, "WriteCapacityUnits": 1}
     )
     
-    # 2. Run the Lambda Function
-    # We pass a dummy event
-    response = counter.lambda_handler({}, {})
+    # 2. CALL THE FUNCTION FROM 'backend'
+    response = backend.lambda_handler({}, {})
 
-    # 3. Verify the Response
+    # Verify Response
     body = json.loads(response["body"])
     assert response["statusCode"] == 200
     assert "count" in body
-    assert body["count"] == 1 # First visit should be 1
+    assert body["count"] == 1
