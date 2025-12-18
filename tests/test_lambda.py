@@ -6,7 +6,7 @@ import json
 
 # Set dummy env vars
 os.environ["TABLE_NAME"] = "test-table"
-
+os.environ["AWS_DEFAULT_REGION"] = "ap-south-1"
 # 1. IMPORT YOUR ACTUAL FILENAME
 import backend 
 
