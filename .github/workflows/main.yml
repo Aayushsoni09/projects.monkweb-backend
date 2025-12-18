@@ -1,0 +1,85 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  id-token: write   # Required for OIDC
+  contents: read
+
+jobs:
+  test-and-scan:
+    name: Test & Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest moto boto3 # Install test deps
+
+      - name: Run Unit Tests
+        run: |
+          export PYTHONPATH=$PYTHONPATH:.
+          pytest tests/
+
+      - name: Run Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          trivy-config: trivy.yaml # Optional: if you want to ignore specific rules
+          format: 'table'
+          exit-code: '1' # Fail the pipeline if HIGH severity issues are found
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+
+  deploy:
+    name: Terraform Deploy
+    needs: test-and-scan # Only run if tests pass
+    if: github.ref == 'refs/heads/main' # Only deploy on push to main
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform 
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Zip Lambda Function
+        # Terraform expects a zip file. We create it here before Terraform runs.
+        run: |
+        
+          zip -r lambda_function.zip backend.py 
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::381491835701:role/OIDC-Role-GithubActions
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -var="lambda_zip=lambda_function.zip"
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -var="lambda_zip=lambda_function.zip"
